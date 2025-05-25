@@ -60,9 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       email,
       password,
     });
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
     setUser(data.user);
   };
 
@@ -74,19 +72,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   ) => {
     // Sign up the user with Supabase Auth
     const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      throw error;
-    }
-    if (!data.user) {
-      throw new Error("Signup failed. Please try again.");
-    }
-    const { error: insertError } = await supabase.from("user_details").insert({
-      user_id: data.user.id,
-      first_name: firstName,
-      last_name: lastName,
-      email,
-    });
-    if (insertError) throw insertError;
+    if (error) throw error;
+    if (!data.user) throw new Error("Signup failed. Please try again.");
+
+    const {error: updateError } = await supabase
+      .from("profiles")
+      .update({
+        first_name: firstName,
+        last_name: lastName,
+      })
+      .eq("id", data.user.id)
+      .select();
+    if (updateError) throw updateError;
     setUser(data.user);
   };
 
@@ -106,7 +103,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-
 // Add default export to resolve Expo Router warning
 export default function AuthContextWrapper({
   children,
