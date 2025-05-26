@@ -18,13 +18,13 @@ function RootContent() {
   }, []);
 
   
-  const publicRoutes = ["/login", "/signup"];
+  const publicRoutes = ["/login", "/signup", "/home"];
 
  
   useEffect(() => {
     if (!loading) {
       if (!user && !publicRoutes.includes(pathname)) {
-        router.replace("/login");
+        router.replace("/home");
       }
      
       else if (user && publicRoutes.includes(pathname)) {

@@ -8,7 +8,7 @@ export default function HomeScreen() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    router.replace('/login');
+    router.replace('/home');
   };
 
   return (
