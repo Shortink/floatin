@@ -13,6 +13,7 @@ type AuthContextType = {
   signup: (
     firstName: string,
     lastName: string,
+    displayName: string,
     email: string,
     password: string
   ) => Promise<void>;
@@ -67,6 +68,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signup = async (
     firstName: string,
     lastName: string,
+    displayName: string,
     email: string,
     password: string
   ) => {
@@ -80,6 +82,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       .update({
         first_name: firstName,
         last_name: lastName,
+        display_name: displayName,
       })
       .eq("id", data.user.id)
       .select();

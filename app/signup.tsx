@@ -15,6 +15,7 @@ export default function SignupScreen() {
   const router = useRouter();
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { signup } = useAuth();
@@ -25,7 +26,7 @@ export default function SignupScreen() {
       return;
     }
     try {
-        await signup(firstname, lastname, email, password);
+        await signup(firstname, lastname, displayName, email, password);
         Alert.alert("Success", "Account created successfully!");
         router.replace("/(tabs)");
     } catch (error: any) {
@@ -50,6 +51,13 @@ export default function SignupScreen() {
           placeholderTextColor="#888"
           value={lastname}
           onChangeText={setLastName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Display Name (no space for now pls)"
+          placeholderTextColor="#888"
+          value={displayName}
+          onChangeText={setDisplayName}
         />
         <TextInput
           style={styles.input}

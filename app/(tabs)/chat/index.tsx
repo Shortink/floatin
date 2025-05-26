@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  Button,
 } from "react-native";
 import { router } from "expo-router";
 import { supabase } from "../../../lib/supabase";
@@ -35,6 +36,39 @@ export default function ChatListScreen() {
     }, [])
   );
 
+  const deleteGroupChat = async () => {
+    const response = await supabase
+      .from("chats")
+      .delete()
+      .eq("is_group", true)
+  }
+
+  const makeGroupChats = async () => {
+    console.log("Creating group chat with all users...");
+    const { data: sessionData } = await supabase.auth.getSession();
+    const currentUserId = sessionData.session?.user.id;
+    if (!currentUserId) return; //if theres no signed in user for some reason
+
+    const { data: allUsers } = await supabase.from("profiles").select("id");
+    const { data: groupChat } = await supabase
+      .from("chats")
+      .insert({ is_group: true, name: "New Group Chat" })
+      .select("*")
+      .single();
+
+    console.log("Created group chat:", groupChat);
+    for (const user of allUsers ?? []) {
+      console.log("Adding user to group chat:", user.id);
+      if (!groupChat) return;
+
+      await supabase
+        .from("chat_members")
+        .insert({ chat_id: groupChat.id, user_id: user.id });
+    }
+
+    fetchChats(false);
+  };
+
   const fetchChats = async (showLoading = false) => {
     const chatPreviews: ChatPreview[] = [];
     if (showLoading) setLoading(true);
@@ -58,11 +92,12 @@ export default function ChatListScreen() {
       .from("chat_previews")
       .select("*")
       .in("id", chatIds)
-      .order('last_sent_at', { ascending: false }); 
+      .order("last_sent_at", { ascending: false });
 
     for (const chat of chatsData ?? []) {
-      let title = chat.name || "Chat";
-      let avatar_url: string ="https://api.dicebear.com/7.x/thumbs/png?seed=guest";
+      let title = chat.name || "Group Chat";
+      let avatar_url: string =
+        `https://api.dicebear.com/7.x/thumbs/png?seed=${chat.id}`;
 
       if (!chat.is_group) {
         //for direct messages only
@@ -71,7 +106,9 @@ export default function ChatListScreen() {
           .select("user_id")
           .eq("chat_id", chat.id);
 
-        const recipientId = members?.find((m) => m.user_id !== currentUserId)?.user_id;
+        const recipientId = members?.find(
+          (m) => m.user_id !== currentUserId
+        )?.user_id;
         if (recipientId) {
           const { data: profile } = await supabase
             .from("profiles")
@@ -79,7 +116,9 @@ export default function ChatListScreen() {
             .eq("id", recipientId)
             .single();
           title = profile?.display_name || "User";
-          avatar_url = profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/png?seed=${recipientId}`;
+          avatar_url =
+            profile?.avatar_url ||
+            `https://api.dicebear.com/7.x/avataaars/png?seed=${recipientId}`;
         }
       }
 
@@ -121,6 +160,17 @@ export default function ChatListScreen() {
           </TouchableOpacity>
         )}
       />
+
+      <Button
+        onPress={makeGroupChats}
+        title="Add all users to a group chat (for testing)"
+        color="green"
+      />
+      <Button
+        onPress={deleteGroupChat}
+        title="Delete all users to a group chat (for testing)"
+        color="red"
+      />
     </SafeAreaView>
   );
 }
@@ -138,6 +188,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#eee",
     backgroundColor: "white",
+  },
+  button: {
+    backgroundColor: "#007bff",
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
   avatar: {
     width: 42,

@@ -48,7 +48,6 @@ export default function ChatScreen() {
       .eq("chat_id", chatId)
       .order("sent_at", { ascending: true });
 
-    console.log(data)
     if (error) console.log(error);
     if (!error && data) setMessages(data as unknown as Message[]);
   };
