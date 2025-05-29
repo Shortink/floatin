@@ -70,6 +70,7 @@ export default function ChatListScreen() {
   };
 
   const fetchChats = async (showLoading = false) => {
+    
     const chatPreviews: ChatPreview[] = [];
     if (showLoading) setLoading(true);
     const { data: sessionData } = await supabase.auth.getSession();
@@ -81,6 +82,8 @@ export default function ChatListScreen() {
       .select("chat_id")
       .eq("user_id", currentUserId);
 
+    console.log("Chat memberships for user:", currentUserId, chatMemberships);
+
     const chatIds = chatMemberships?.map((m) => m.chat_id);
     if (!chatIds || chatIds.length === 0) {
       setChats([]);
@@ -88,11 +91,13 @@ export default function ChatListScreen() {
       return;
     }
 
+    console.log("Fetching chats for user:", currentUserId);
     const { data: chatsData } = await supabase
       .from("chat_previews")
       .select("*")
       .in("id", chatIds)
       .order("last_sent_at", { ascending: false });
+    console.log("Fetched chats:", chatsData);
 
     for (const chat of chatsData ?? []) {
       let title = chat.name || "Group Chat";
@@ -101,6 +106,7 @@ export default function ChatListScreen() {
 
       if (!chat.is_group) {
         //for direct messages only
+        console.log("Fetching recipient for chat:");
         const { data: members } = await supabase
           .from("chat_members")
           .select("user_id")
@@ -109,9 +115,11 @@ export default function ChatListScreen() {
         const recipientId = members?.find(
           (m) => m.user_id !== currentUserId
         )?.user_id;
+        console.log("recipientId:", recipientId);
         if (recipientId) {
+          
           const { data: profile } = await supabase
-            .from("profiles")
+            .from("public_profiles")
             .select("display_name, avatar_url")
             .eq("id", recipientId)
             .single();

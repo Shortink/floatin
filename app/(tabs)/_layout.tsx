@@ -18,7 +18,7 @@ export default function AppTabsLayout() {
         },
       }}
     >
-      <Tabs.Screen name="index" options={{title: "Home",}}/>
+      <Tabs.Screen name="home" options={{title: "Home",}}/>
       <Tabs.Screen name="likes" options={{title: "Likes",}}/>
       <Tabs.Screen name="events" options={{title: "Events",}}/>
       <Tabs.Screen name="chat" options={{title: "Chat",}}/>
