@@ -22,9 +22,6 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     fetchUserProfile();
-    if (profile) {
-      console.log("Updated profile:", profile);
-    }
   }, []);
 
   const fetchUserProfile = async () => {
@@ -36,10 +33,9 @@ export default function ProfileScreen() {
 
     if (error) console.error("Error fetching user profile:", error);
     if (data) {
-      //   data.avatar_url ??= `https://api.dicebear.com/7.x/avataaars/png?seed=${user.id}`;
+        data.avatar_url ??= `https://api.dicebear.com/7.x/avataaars/png?seed=${user.id}`;
     }
     setProfile(data);
-    console.log("Set user profile:", profile);
   };
 
   return (
@@ -51,7 +47,7 @@ export default function ProfileScreen() {
         resizeMode="cover"
       />
       <Text style={styles.label}>Display Name:</Text>
-      {/* <Text style={styles.value}>{profile.display_name}</Text> */}
+      <Text style={styles.value}>{profile?.display_name}</Text>
 
       <Text style={styles.label}>Email:</Text>
       <Text style={styles.value}>{user.email}</Text>

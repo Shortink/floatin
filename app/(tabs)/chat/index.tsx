@@ -37,40 +37,33 @@ export default function ChatListScreen() {
   );
 
   const deleteGroupChat = async () => {
-    const response = await supabase
-      .from("chats")
-      .delete()
-      .eq("is_group", true)
-  }
+    const response = await supabase.from("chats").delete().eq("is_group", true);
+  };
 
   const makeGroupChats = async () => {
-    console.log("Creating group chat with all users...");
     const { data: sessionData } = await supabase.auth.getSession();
     const currentUserId = sessionData.session?.user.id;
     if (!currentUserId) return; //if theres no signed in user for some reason
 
-    const { data: allUsers } = await supabase.from("profiles").select("id");
+    const { data: allUsers } = await supabase
+      .from("public_profiles")
+      .select("id");
     const { data: groupChat } = await supabase
       .from("chats")
       .insert({ is_group: true, name: "New Group Chat" })
       .select("*")
       .single();
 
-    console.log("Created group chat:", groupChat);
     for (const user of allUsers ?? []) {
-      console.log("Adding user to group chat:", user.id);
       if (!groupChat) return;
-
       await supabase
         .from("chat_members")
         .insert({ chat_id: groupChat.id, user_id: user.id });
     }
-
     fetchChats(false);
   };
 
   const fetchChats = async (showLoading = false) => {
-    
     const chatPreviews: ChatPreview[] = [];
     if (showLoading) setLoading(true);
     const { data: sessionData } = await supabase.auth.getSession();
@@ -82,8 +75,6 @@ export default function ChatListScreen() {
       .select("chat_id")
       .eq("user_id", currentUserId);
 
-    console.log("Chat memberships for user:", currentUserId, chatMemberships);
-
     const chatIds = chatMemberships?.map((m) => m.chat_id);
     if (!chatIds || chatIds.length === 0) {
       setChats([]);
@@ -91,22 +82,18 @@ export default function ChatListScreen() {
       return;
     }
 
-    console.log("Fetching chats for user:", currentUserId);
     const { data: chatsData } = await supabase
       .from("chat_previews")
       .select("*")
       .in("id", chatIds)
       .order("last_sent_at", { ascending: false });
-    console.log("Fetched chats:", chatsData);
 
     for (const chat of chatsData ?? []) {
       let title = chat.name || "Group Chat";
-      let avatar_url: string =
-        `https://api.dicebear.com/7.x/thumbs/png?seed=${chat.id}`;
+      let avatar_url: string = `https://api.dicebear.com/7.x/thumbs/png?seed=${chat.id}`;
 
       if (!chat.is_group) {
         //for direct messages only
-        console.log("Fetching recipient for chat:");
         const { data: members } = await supabase
           .from("chat_members")
           .select("user_id")
@@ -115,9 +102,7 @@ export default function ChatListScreen() {
         const recipientId = members?.find(
           (m) => m.user_id !== currentUserId
         )?.user_id;
-        console.log("recipientId:", recipientId);
         if (recipientId) {
-          
           const { data: profile } = await supabase
             .from("public_profiles")
             .select("display_name, avatar_url")
