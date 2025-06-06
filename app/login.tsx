@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "./../context/auth";
+import { LinearGradient } from "expo-linear-gradient";
+import Button from "../components/Button";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -38,7 +40,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={["#f7f0ff", "#b9a5ec"]} style={styles.container}>
+      <Text>Welcome Back</Text>
       <View style={styles.formContainer}>
         <TextInput
           style={styles.input}
@@ -57,9 +60,11 @@ export default function LoginScreen() {
           value={password}
           onChangeText={setPassword}
         />
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
+        <Button
+          title="Login"
+          onPress={handleLogin}
+          style={styles.loginButton}
+        />
 
         <TouchableOpacity onPress={() => router.push("/signup")}>
           <Text style={styles.registerText}>
@@ -67,7 +72,7 @@ export default function LoginScreen() {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -88,18 +93,20 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 8,
+    borderRadius: 22,
     marginBottom: 12,
     fontSize: 16,
+    shadowColor: "#000",
+    backgroundColor: "#fff",
+
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2, // for Android
   },
-  loginButton: {
-    width: "100%",
-    backgroundColor: "#333",
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-  },
+  loginButton: {},
   loginButtonText: {
     color: "white",
     fontSize: 18,

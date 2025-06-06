@@ -1,21 +1,55 @@
-import { Link } from 'expo-router';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { Link, useRouter } from "expo-router";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import Button from "../components/Button";
 
 export default function HomeScreen() {
+  const router = useRouter();
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <LinearGradient
+      colors={["#f7f0ff", "#b9a5ec"]}
+      style={styles.container}
+    >
       {/* TODO: Add animated bubbles here */}
-      <Text style={{ fontSize: 24, marginBottom: 40 }}>Welcome</Text>
-      <Link href="/signup" asChild>
-        <TouchableOpacity style={{ padding: 10, backgroundColor: '#ccc', marginBottom: 20 }}>
-          <Text>Sign Up</Text>
-        </TouchableOpacity>
-      </Link>
-      <Link href="/login" asChild>
-        <TouchableOpacity style={{ padding: 10, backgroundColor: '#ccc' }}>
-          <Text>Log In</Text>
-        </TouchableOpacity>
-      </Link>
-    </View>
+      <Image
+        source={require("../assets/Full_Logo_Dark.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+
+      <Button
+        title="Sign Up"
+        onPress={() => router.push("/signup")}
+        style={styles.signupButton}
+      />
+
+      <Button
+        title="Log In"
+        onPress={() => router.push("/login")}
+        style={styles.signupButton}
+      />
+    </LinearGradient>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  signupButton: {
+    marginTop: 20,
+  },
+  loginButton: {},
+  value: {
+    fontSize: 16,
+    color: "#333",
+  },
+  logo: {
+    width: 700,
+    height: 100,
+    marginBottom: 40,
+  },
+});

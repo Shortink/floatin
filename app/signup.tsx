@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "./../context/auth";
+import { LinearGradient } from "expo-linear-gradient";
+import Button from "../components/Button";
 
 export default function SignupScreen() {
   const router = useRouter();
@@ -26,9 +28,9 @@ export default function SignupScreen() {
       return;
     }
     try {
-        await signup(firstname, lastname, displayName, email, password);
-        Alert.alert("Success", "Account created successfully!");
-        router.replace("/(tabs)");
+      await signup(firstname, lastname, displayName, email, password);
+      Alert.alert("Success", "Account created successfully!");
+      router.replace("/(tabs)");
     } catch (error: any) {
       console.error("Signup Error:", error);
       Alert.alert("Signup Error", error?.message ?? "Something went wrong.");
@@ -36,33 +38,19 @@ export default function SignupScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={["#f7f0ff", "#b9a5ec"]} style={styles.container}>
       <View style={styles.formContainer}>
         <TextInput
           style={styles.input}
-          placeholder="First Name"
-          placeholderTextColor="#888"
-          value={firstname}
-          onChangeText={setFirstName}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Last Name"
-          placeholderTextColor="#888"
-          value={lastname}
-          onChangeText={setLastName}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Display Name (no space for now pls)"
-          placeholderTextColor="#888"
+          placeholder="Username"
+          placeholderTextColor="grey"
           value={displayName}
           onChangeText={setDisplayName}
         />
         <TextInput
           style={styles.input}
           placeholder="Email"
-          placeholderTextColor="#888"
+          placeholderTextColor="grey"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -76,10 +64,11 @@ export default function SignupScreen() {
           value={password}
           onChangeText={setPassword}
         />
-
-        <TouchableOpacity style={styles.loginButton} onPress={handleSignup}>
-          <Text style={styles.loginButtonText}>Register</Text>
-        </TouchableOpacity>
+        <Button
+          title="Sign Up"
+          onPress={handleSignup}
+          style={styles.loginButton}
+        />
 
         <TouchableOpacity onPress={() => router.push("/login")}>
           <Text style={styles.registerText}>
@@ -87,7 +76,7 @@ export default function SignupScreen() {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 const styles = StyleSheet.create({
@@ -111,14 +100,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 16,
   },
-  loginButton: {
-    width: "100%",
-    backgroundColor: "#333",
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-  },
+  loginButton: {},
   loginButtonText: {
     color: "white",
     fontSize: 18,
