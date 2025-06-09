@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { supabase } from "../../../lib/supabase";
+import Button from "../../../components/Button";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -15,10 +16,18 @@ export default function HomeScreen() {
     router.replace("/welcome");
   };
 
+  const resetOnboaring = async () => {
+    await supabase.auth.updateUser({
+      data: { has_completed_onboarding: false },
+    });
+    router.replace("/onboarding");
+  };
+
   return (
     <View style={styles.container}>
       <Button title="Sign Out" onPress={handleSignOut} />
       <Button title="Go to Profile" onPress={openProfile} />
+      <Button title="Onboard" onPress={resetOnboaring} />
     </View>
   );
 }
@@ -29,7 +38,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
   },
   text: {
     fontSize: 20,

@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "./../context/auth";
-import { LinearGradient } from "expo-linear-gradient";
 import Button from "../components/Button";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -18,17 +18,17 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Missing Information", "Please fill in both fields.");
-      return;
-    }
+  const isFormValid = email.trim() !== "" && password.trim() !== "";
 
+  const handleLogin = async () => {
     try {
-      await login(email, password);
-      router.replace("/(tabs)");
+      const user: any = await login(email, password);
+      if (user?.user_metadata.has_completed_onboarding === "false") {
+        router.replace("/onboarding");
+      } else {
+        router.replace("/(tabs)");
+      }
     } catch (error: any) {
-      console.error("Login Error:", error); // Log error for debugging
       let errorMessage = "Something went wrong. Please try again.";
 
       if (error?.message) {
@@ -40,49 +40,59 @@ export default function LoginScreen() {
   };
 
   return (
-    <LinearGradient colors={["#f7f0ff", "#b9a5ec"]} style={styles.container}>
-      <Text>Welcome Back</Text>
-      <View style={styles.formContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#888"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#888"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-        <Button
-          title="Login"
-          onPress={handleLogin}
-          style={styles.loginButton}
-        />
-
-        <TouchableOpacity onPress={() => router.push("/signup")}>
-          <Text style={styles.registerText}>
-            Don't have an account? Sign Up
-          </Text>
-        </TouchableOpacity>
+    <KeyboardAwareScrollView
+      contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+      enableOnAndroid={true}
+      keyboardShouldPersistTaps="handled"
+      // extraScrollHeight={40}
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>Welcome back</Text>
+        <View style={styles.formContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#888"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#888"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+          <Button
+            title="Login"
+            onPress={handleLogin}
+            style={styles.loginButton}
+            disabled={!isFormValid}
+          />
+          <TouchableOpacity onPress={() => router.push("/reset")}>
+            <Text style={styles.registerText}>Forgot your password?</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </LinearGradient>
+    </KeyboardAwareScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    paddingHorizontal: 24,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#000",
+    marginBottom: 40,
   },
   formContainer: {
     width: "100%",
@@ -90,31 +100,25 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    padding: 12,
     borderWidth: 1,
     borderColor: "#ddd",
+    height: 50,
+    backgroundColor: "#fff",
     borderRadius: 22,
     marginBottom: 12,
     fontSize: 16,
     shadowColor: "#000",
-    backgroundColor: "#fff",
-
     paddingHorizontal: 20,
-    paddingVertical: 12,
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
     elevation: 2, // for Android
   },
-  loginButton: {},
-  loginButtonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
+  loginButton: {
+    marginTop: 10,
+    marginBottom: 20,
   },
   registerText: {
-    marginTop: 15,
-    color: "#333",
     fontSize: 14,
+    color: "black",
+    textDecorationLine: "underline",
+    marginBottom: 30,
   },
 });
