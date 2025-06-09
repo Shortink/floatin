@@ -6,14 +6,15 @@ import React, {
   ReactNode,
 } from "react";
 import { supabase } from "../lib/supabase";
+import { User } from "@supabase/supabase-js";
 
 type AuthContextType = {
   user: any;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   signup: (
     firstName: string,
     lastName: string,
-    displayName: string,
+    userName: string,
     email: string,
     password: string
   ) => Promise<void>;
@@ -22,7 +23,9 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  login: async () => {},
+  login: async () => {
+    throw new Error("login not implemented");
+  },
   signup: async () => {},
   logout: async () => {},
 });
@@ -63,26 +66,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     });
     if (error) throw error;
     setUser(data.user);
+    return data.user;
   };
 
   const signup = async (
     firstName: string,
     lastName: string,
-    displayName: string,
+    userName: string,
     email: string,
     password: string
   ) => {
     // Sign up the user with Supabase Auth
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: { data: { has_completed_onboarding: false } },
+    });
     if (error) throw error;
     if (!data.user) throw new Error("Signup failed. Please try again.");
 
-    const {error: updateError } = await supabase
+    const { error: updateError } = await supabase
       .from("profiles")
       .update({
         first_name: firstName,
         last_name: lastName,
-        display_name: displayName,
+        user_name: userName,
       })
       .eq("id", data.user.id)
       .select();
