@@ -10,15 +10,21 @@ import {
 type Props = {
   title: string;
   onPress: () => void;
-  style?: ViewStyle;
+  style?: ViewStyle | ViewStyle[];
   textStyle?: TextStyle;
+  disabled?: boolean;
 };
 
-const Button = ({ title, onPress, style, textStyle }: Props) => {
+const Button = ({ title, onPress, style, textStyle, disabled }: Props) => {
   return (
     <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [styles.button, pressed && styles.pressed, style]}
+      onPress={!disabled ? onPress : undefined}
+      style={({ pressed }) => [
+        styles.button,
+        pressed && !disabled && styles.pressed,
+        disabled && { opacity: 0.5 },
+        style,
+      ]}
     >
       <Text style={[styles.text, textStyle]}>{title}</Text>
     </Pressable>
