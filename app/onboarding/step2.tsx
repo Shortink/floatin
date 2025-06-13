@@ -80,6 +80,7 @@ export default function SecondStepScreen() {
           ))}
         </View>
       </View>
+      <Button title="Next" onPress={()=> router.push("/onboarding/step3")} />
     </KeyboardAwareScrollView>
   );
 }

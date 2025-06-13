@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { supabase } from "../../../lib/supabase";
 import Button from "../../../components/Button";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -24,11 +25,13 @@ export default function HomeScreen() {
   };
 
   return (
+    <LinearGradient colors={["#FFF6F3", "#D6BDFA"]} style={{flex: 1, }}>
     <View style={styles.container}>
       <Button title="Sign Out" onPress={handleSignOut} />
       <Button title="Go to Profile" onPress={openProfile} />
       <Button title="Onboard" onPress={resetOnboaring} />
     </View>
+    </LinearGradient>
   );
 }
 
