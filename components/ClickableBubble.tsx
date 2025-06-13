@@ -1,53 +1,65 @@
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { Pressable, StyleSheet, Text, ImageBackground, ViewStyle } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  ViewStyle,
+  TextStyle,
+} from "react-native";
 
 type Props = {
   title: string;
   onPress: () => void;
   selected: boolean;
   style?: ViewStyle | ViewStyle[];
+  textStyle?: TextStyle;
 };
 
-const PressableBubble = ({ title, onPress, selected, style }: Props) => {
-  const image = selected
-    ? require("../assets/BlueOutlineBubblev2.png") // selected state
-    : require("../assets/BlueOutlineBubblev2.png"); // unselected state
+const PressableBubble = ({
+  title,
+  onPress,
+  selected,
+  style,
+}: Props) => {
+  const background = selected
+    ? ["#fff7f3", "#ffd2ec"] // selected state
+    : ["#fff7f3", "##020630"]; // unselected state
   return (
     <Pressable onPress={onPress} style={[styles.container, style]}>
-      <ImageBackground
-        source={image}
-        style={styles.bubble}
-        imageStyle={{ borderRadius: 50 }}
+      <LinearGradient
+        colors={["#fff7f3", "#ffd2ec"]}
+        style={styles.gradient}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 1 }}
       >
         <Text style={[styles.text, selected && styles.selectedText]}>
           {title}
         </Text>
-      </ImageBackground>
+      </LinearGradient>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: 100,
-    height: 100,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 50,
+    width: 81,
+    height: 50,
+    margin: 15,
+    borderRadius: 10,
+  },
+  gradient: {
+    flex: 1,
+    borderRadius: 10,
+    justifyContent: 'center'
   },
   text: {
     color: "#000",
     fontSize: 18,
+    textAlign: "center",
   },
   selectedText: {
     color: "#fff",
-  },
-  bubble: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 
