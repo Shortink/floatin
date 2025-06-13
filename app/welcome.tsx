@@ -12,7 +12,7 @@ export default function WelcomeScreen() {
           key={i}
           size={Math.random() < 0.5 ? 100 : 200} //50% chance for size to either be 200 or 100
           speed={Math.random() * 0.5 + 0.5} //random speed between 0.5 and 1
-          source={require("../assets/Gradient_Bubble_1.png")}
+          source={require("../assets/BlueOutlineBubblev2.png")}
         />
       ))}
       <Image

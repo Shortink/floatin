@@ -90,9 +90,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: "bold",
     color: "#000",
     marginBottom: 40,
+    fontFamily: 'Nunito',
+    fontWeight: '800'
   },
   formContainer: {
     width: "100%",

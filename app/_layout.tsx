@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { AuthProvider, useAuth } from "./../context/auth";
 import { LinearGradient } from "expo-linear-gradient";
-import Bubble from "../components/Bubble";
+import { useFonts } from "expo-font"
 
 function RootContent() {
   const router = useRouter();
@@ -13,6 +13,11 @@ function RootContent() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 
+   const [fontsLoaded] = useFonts({
+    "Poppins-BlackItalic": require("../assets/fonts/Poppins-BlackItalic.ttf"),
+    "Nunito": require("../assets/fonts/Nunito-VariableFont_wght.ttf")
+  })
+  
   useEffect(() => {
     setLoading(false);
   }, []);
@@ -20,7 +25,7 @@ function RootContent() {
   const publicRoutes = ["/login", "/signup", "/welcome", "/reset"];
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && fontsLoaded) {
       if (!user && !publicRoutes.includes(pathname)) {
         router.replace("/welcome");
       } else if (user && publicRoutes.includes(pathname)) {
@@ -33,7 +38,7 @@ function RootContent() {
         }
       }
     }
-  }, [loading, user, pathname, router]);
+  }, [loading, fontsLoaded, user, pathname, router]);
 
   if (loading) {
     return (

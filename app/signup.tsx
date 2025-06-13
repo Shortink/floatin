@@ -81,7 +81,7 @@ export default function SignupScreen() {
       // extraScrollHeight={40}
     >
       <View style={styles.container}>
-        <Text style={styles.title}>Let's Get Started</Text>
+        <Text style={styles.title}>Let's get started</Text>
         <View style={styles.formContainer}>
           <TextInput
             style={styles.input}
@@ -141,8 +141,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
+    fontSize: 36,
+    fontFamily: 'Nunito',
+    fontWeight: '800',
     color: "#000",
     marginBottom: 40,
   },

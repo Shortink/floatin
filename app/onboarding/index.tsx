@@ -77,8 +77,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
+    fontSize: 36,
+    fontFamily: "Nunito",
+    fontWeight: "800",
     color: "#000",
     marginBottom: 40,
   },
