@@ -4,6 +4,7 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/auth";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Picker } from "@react-native-picker/picker";
 
 export default function OnboardScreen() {
   const { user } = useAuth();
@@ -49,20 +50,58 @@ export default function OnboardScreen() {
     >
       <View style={styles.container}>
         <Text style={styles.title}>Let's get to know you</Text>
-        <TextInput
-          placeholder="What's your preferred name?"
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-        />
-        <TextInput
-          placeholder="YYYY/MM/DD"
-          style={styles.input}
-          value={birthday}
-          onChangeText={(text) => setBirthday(formatDate(text))}
-          keyboardType="numeric"
-          maxLength={10}
-        />
+
+        <View style={styles.card}>
+          <Text style={{ marginBottom: 8, textAlign: "center" }}>
+            what's your preferred name?
+          </Text>
+          <TextInput style={styles.input} value={name} onChangeText={setName} />
+        </View>
+
+        <View style={styles.card}>
+          <Text style={{ marginBottom: 8, textAlign: "center" }}>
+            when's your birthday?
+          </Text>
+          <TextInput
+            placeholder="YYYY/MM/DD"
+            style={styles.input}
+            value={birthday}
+            onChangeText={(text) => setBirthday(formatDate(text))}
+            keyboardType="numeric"
+            maxLength={10}
+          />
+        </View>
+
+        <View style={styles.card}>
+          <Text style={{ marginBottom: 8, textAlign: "center" }}>
+            what are your pronouns?
+          </Text>
+          <View style={styles.picker}>
+            <Picker>
+              <Picker.Item label="" value="" />
+              <Picker.Item label="He/Him" value="he/him" />
+              <Picker.Item label="She/Her" value="she/her" />
+              <Picker.Item label="They/Them" value="they/them" />
+              <Picker.Item label="Other" value="other" />
+            </Picker>
+          </View>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={{ marginBottom: 8, textAlign: "center" }}>
+            which area of calgary do you live in?
+          </Text>
+          <View style={styles.picker}>
+            <Picker>
+              <Picker.Item label="" value="" />
+              <Picker.Item label="Southeast" value="he/him" />
+              <Picker.Item label="Southwest" value="she/her" />
+              <Picker.Item label="Northeast" value="they/them" />
+              <Picker.Item label="Northwest" value="other" />
+            </Picker>
+          </View>
+        </View>
+
         <Button title="Next" onPress={validatePage} disabled={!isFormValid} />
       </View>
     </KeyboardAwareScrollView>
@@ -76,6 +115,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
   },
+  card: {
+    backgroundColor: "#f0eaff",
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 30,
+    width: "90%",
+  },
   title: {
     fontSize: 36,
     fontFamily: "Nunito",
@@ -84,16 +130,22 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   input: {
-    width: "100%",
     borderWidth: 1,
     borderColor: "#ddd",
     height: 50,
     backgroundColor: "#fff",
-    borderRadius: 22,
+    borderRadius: 50,
     marginBottom: 12,
     fontSize: 16,
-    shadowColor: "#000",
     paddingHorizontal: 20,
     elevation: 2, // for Android
+  },
+  picker: {
+    height: 50,
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    backgroundColor: "#fff",
+    elevation: 2,
   },
 });

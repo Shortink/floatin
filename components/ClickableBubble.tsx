@@ -6,6 +6,7 @@ import {
   Text,
   ViewStyle,
   TextStyle,
+  View,
 } from "react-native";
 
 type Props = {
@@ -16,46 +17,55 @@ type Props = {
   textStyle?: TextStyle;
 };
 
-const PressableBubble = ({
-  title,
-  onPress,
-  selected,
-  style,
-}: Props) => {
-  const background = selected
-    ? ["#fff7f3", "#ffd2ec"] // selected state
-    : ["#fff7f3", "##020630"]; // unselected state
+const PressableBubble = ({ title, onPress, selected, style }: Props) => {
   return (
-    <Pressable onPress={onPress} style={[styles.container, style]}>
-      <LinearGradient
-        colors={["#fff7f3", "#ffd2ec"]}
-        style={styles.gradient}
-        start={{ x: 0, y: 1 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <Text style={[styles.text, selected && styles.selectedText]}>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.container,
+        selected && styles.selectedContainer,
+        style,
+      ]}
+    >
+      <View>
+        <Text
+          style={[styles.text, selected && styles.selectedText]}
+          numberOfLines={2}
+          adjustsFontSizeToFit
+          minimumFontScale={0.5}
+        >
           {title}
         </Text>
-      </LinearGradient>
+      </View>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: 81,
+    width: 99,
     height: 50,
-    margin: 15,
+    margin: 5,
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#9b98f7",
+    justifyContent: "center",
+    marginBottom: 15,
+    backgroundColor: "#FFFFFF",
+    opacity: 1,
+    padding: 10,
+  },
+  selectedContainer: {
+    backgroundColor: "cornflowerblue",
   },
   gradient: {
     flex: 1,
     borderRadius: 10,
-    justifyContent: 'center'
+    justifyContent: "center",
   },
   text: {
     color: "#000",
-    fontSize: 18,
+    fontSize: 16,
     textAlign: "center",
   },
   selectedText: {
