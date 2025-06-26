@@ -1,16 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { supabase } from "../../../lib/supabase";
-import Button from "../../../components/Button";
+import { supabase } from "../../lib/supabase";
+import Button from "../../components/Button";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function HomeScreen() {
   const router = useRouter();
-
-  const openProfile = () => {
-    router.navigate('/home/profile');
-  };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -25,13 +21,12 @@ export default function HomeScreen() {
   };
 
   return (
-    <LinearGradient colors={["#FFF6F3", "#D6BDFA"]} style={{flex: 1, }}>
-    <View style={styles.container}>
-      <Button title="Sign Out" onPress={handleSignOut} />
-      <Button title="Go to Profile" onPress={openProfile} />
-      <Button title="Onboard" onPress={resetOnboaring} />
-    </View>
-    </LinearGradient>
+    // <LinearGradient colors={["#FFF6F3", "#FFF6F3"]} style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Button title="Sign Out" onPress={handleSignOut} />
+        <Button title="Onboard" onPress={resetOnboaring} />
+      </View>
+    // </LinearGradient>
   );
 }
 
@@ -41,7 +36,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
-    // backgroundColor: "#fff",
+    backgroundColor: "#FFF6F3",
   },
   text: {
     fontSize: 20,

@@ -4,10 +4,11 @@ import HomeIcon from "../../assets/icons/home.svg";
 import ChatIcon from "../../assets/icons/chat.svg";
 import EventIcon from "../../assets/icons/event.svg";
 import MatchesIcon from "../../assets/icons/matches.svg";
+import ProfileIcon from "../../assets/icons/profile.svg";
 
 export default function AppTabsLayout() {
   return (
-    <View style={{ flex: 1, backgroundColor: "#D6BDFA" }}>
+    <View style={{ flex: 1, backgroundColor: "#FFF6F3" }}>
       <Tabs
         screenOptions={{
           headerShown: false,
@@ -134,6 +135,35 @@ export default function AppTabsLayout() {
                   }}
                 />
                 <MatchesIcon
+                  width={26}
+                  height={26}
+                  fill={focused ? "#66BFD2" : "#999"}
+                />
+              </View>
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+            tabBarIcon: ({ focused }) => (
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <View
+                  style={{
+                    height: 3,
+                    width: 35,
+                    backgroundColor: focused ? "#66BFD2" : "transparent",
+                    marginBottom: 4,
+                    borderRadius: 2,
+                  }}
+                />
+                <ProfileIcon
                   width={26}
                   height={26}
                   fill={focused ? "#66BFD2" : "#999"}
