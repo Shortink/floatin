@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabase";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import PressableBubble from "../../components/ClickableBubble";
 import { useEffect, useState } from "react";
+import { useAuth } from "../../context/auth";
 
 type Interest = {
   id: number;
@@ -13,13 +14,14 @@ type Interest = {
 };
 
 export default function SecondStepScreen() {
+  const { user } = useAuth();
   const [selected, setSelected] = useState<string[]>([]);
   const router = useRouter();
   const [interest, setInterest] = useState();
   const categoryMessages = {
-    general: "What are you into?",
-    connection_style: "How do you prefer to connect with others?",
-    event_type: "Which type of events would you join?",
+    Interest: "What are you into?",
+    Vibe: "How do you prefer to connect with others?",
+    Plans: "Which type of events would you join?",
   };
 
   useEffect(() => {
@@ -38,16 +40,37 @@ export default function SecondStepScreen() {
         return [...prev, option];
       }
     });
+    // console.log(selected);
+  };
+
+  const handleNext = async () => {
+    await supabase.from("user_interests").delete().eq("user_id", user.id);
+    const inserts = selected.map((interest) => ({
+      user_id: user.id,
+      interest_id: interest.id,
+    }));
+
+    const { data, error } = await supabase
+      .from("user_interests")
+      .insert(inserts);
+
+    router.push("/onboarding/step3");
   };
 
   const fetchInterest = async () => {
     console.log("Fetching interest list...");
     const { data, error } = await supabase
       .from("interests")
-      .select("id, name, category");
+      .select("id, name, category:interest_categories (id, name)");
     if (error) console.error("Error fetching interest list:", error);
 
-    const interests = data?.reduce(
+    const flattened = data?.map((item) => ({
+      id: item.id,
+      name: item.name,
+      category: item.category?.name ?? null,
+    }));
+
+    const interests = flattened?.reduce(
       (acc: Record<string, Interest>, interest: Interest) => {
         const { category } = interest;
         if (!acc[category]) {
@@ -80,7 +103,14 @@ export default function SecondStepScreen() {
         </View>
         {Object.entries(interest).map(([category, interestGroup]) => (
           <View key={category} style={styles.grid}>
-            <Text style={{ width: "100%", textAlign: "center", fontSize: 20, marginBottom: 20, }}>
+            <Text
+              style={{
+                width: "100%",
+                textAlign: "center",
+                fontSize: 20,
+                marginBottom: 20,
+              }}
+            >
               {categoryMessages[category] || `What are you into?`}
             </Text>
             {interestGroup.map((option) => (
@@ -94,12 +124,12 @@ export default function SecondStepScreen() {
           </View>
         ))}
         <Button
-        title="Next"
-        onPress={() => router.push("/onboarding/step3")}
-        style={{ marginBottom: 100 }}
-      />
+          title="Next"
+          // onPress={() => router.push("/onboarding/step3")}
+          onPress={handleNext}
+          style={{ marginBottom: 100 }}
+        />
       </View>
-      
     </KeyboardAwareScrollView>
   );
 }
@@ -141,7 +171,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0eaff",
     marginBottom: 50,
     width: "100%",
-    paddingBottom:30,
-    paddingTop: 20
+    paddingBottom: 30,
+    paddingTop: 20,
+    paddingHorizontal: 10,
   },
 });
