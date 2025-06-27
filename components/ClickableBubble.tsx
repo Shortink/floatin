@@ -43,7 +43,7 @@ const PressableBubble = ({ title, onPress, selected, style }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 99,
+    width: "30%",
     height: 50,
     margin: 5,
     borderRadius: 10,
