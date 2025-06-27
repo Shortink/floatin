@@ -5,18 +5,22 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/auth";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Picker } from "@react-native-picker/picker";
+import { supabase } from "../../lib/supabase";
 
 export default function OnboardScreen() {
   const { user } = useAuth();
   const router = useRouter();
   const [name, setName] = useState("");
   const [birthday, setBirthday] = useState("");
+  const [pronouns, setPronouns] = useState<String>("")
+  const [quadrant, setQuadrant] = useState<String>("")
 
   //prevent user from going back to this screen once onboarding is done
   useEffect(() => {
     if (user?.user_metadata?.has_completed_onboarding) {
       router.replace("/home");
     }
+    
   }, [user]);
 
   const isFormValid = name.trim() !== "" && birthday.length == 10;
@@ -39,7 +43,12 @@ export default function OnboardScreen() {
     return formatted;
   };
 
-  const validatePage = () => {
+  const validatePage = async () => {
+    const { error } = await supabase
+          .from("profiles")
+          .update({display_name: name, pronouns: pronouns, quadrant: quadrant, birthday: birthday.replace(/\//g, '-')})
+          .eq('id', user.id)
+    
     router.push("/onboarding/step2");
   };
   return (
@@ -77,12 +86,12 @@ export default function OnboardScreen() {
             what are your pronouns?
           </Text>
           <View style={styles.picker}>
-            <Picker>
-              <Picker.Item label="" value="" />
-              <Picker.Item label="He/Him" value="he/him" />
-              <Picker.Item label="She/Her" value="she/her" />
-              <Picker.Item label="They/Them" value="they/them" />
-              <Picker.Item label="Other" value="other" />
+            <Picker onValueChange={(itemValue: String) => setPronouns(itemValue)}>
+              <Picker.Item label="" value=""  enabled={false} />
+              <Picker.Item label="He/Him" value="He/Him" />
+              <Picker.Item label="She/Her" value="She/Her" />
+              <Picker.Item label="They/Them" value="They/Them" />
+              <Picker.Item label="Other" value="Other" />
             </Picker>
           </View>
         </View>
@@ -92,12 +101,12 @@ export default function OnboardScreen() {
             which area of calgary do you live in?
           </Text>
           <View style={styles.picker}>
-            <Picker>
-              <Picker.Item label="" value="" />
-              <Picker.Item label="Southeast" value="he/him" />
-              <Picker.Item label="Southwest" value="she/her" />
-              <Picker.Item label="Northeast" value="they/them" />
-              <Picker.Item label="Northwest" value="other" />
+            <Picker onValueChange={(itemValue: String) => setQuadrant(itemValue)}>
+              <Picker.Item label="" value="" enabled={false} />
+              <Picker.Item label="Southeast" value="SE" />
+              <Picker.Item label="Southwest" value="SW" />
+              <Picker.Item label="Northeast" value="NE" />
+              <Picker.Item label="Northwest" value="NW" />
             </Picker>
           </View>
         </View>
