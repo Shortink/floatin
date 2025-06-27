@@ -8,7 +8,7 @@ import ProfileIcon from "../../assets/icons/profile.svg";
 
 export default function AppTabsLayout() {
   return (
-    <View style={{ flex: 1, backgroundColor: "#FFF6F3" }}>
+    <View style={{ flex: 1, backgroundColor: "#FFF6F3", }}>
       <Tabs
         screenOptions={{
           headerShown: false,
