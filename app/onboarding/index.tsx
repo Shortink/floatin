@@ -14,6 +14,7 @@ export default function OnboardScreen() {
   const [birthday, setBirthday] = useState("");
   const [pronouns, setPronouns] = useState<String>("")
   const [quadrant, setQuadrant] = useState<String>("")
+  const avatar_url = `https://api.dicebear.com/7.x/thumbs/png?seed=${user.id}`
 
   //prevent user from going back to this screen once onboarding is done
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function OnboardScreen() {
   const validatePage = async () => {
     const { error } = await supabase
           .from("profiles")
-          .update({display_name: name, pronouns: pronouns, quadrant: quadrant, birthday: birthday.replace(/\//g, '-')})
+          .update({display_name: name, pronouns: pronouns, quadrant: quadrant, avatar_url:avatar_url, birthday: birthday.replace(/\//g, '-')})
           .eq('id', user.id)
     
     router.push("/onboarding/step2");
