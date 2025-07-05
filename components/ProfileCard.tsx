@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   },
   background: {
     width: "100%",
-    height: 200,
+    height: 210,
     marginTop: 30,
   },
   heading: {
