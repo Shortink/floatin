@@ -15,6 +15,7 @@ import { useAuth } from "../../context/auth";
 import LeftArrow from "../../assets/icons/LeftArrow.svg";
 import RightArrow from "../../assets/icons/RightArrow.svg";
 import RadialGradientBackground from "../../components/RadialGradient";
+import { Calendar } from "react-native-calendars";
 
 type UserProfile = {
   id: string;
@@ -29,9 +30,10 @@ export default function HomeScreen() {
   const { user } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const today = new Date().toLocaleDateString("en-CA"); // format: YYYY-MM-DD
 
   useEffect(() => {
-    if (user?.id) {
+    if (user.id) {
       fetchUserProfiles();
     }
   }, [user]);
@@ -108,6 +110,24 @@ export default function HomeScreen() {
               <RightArrow width={37} height={71} />
             </TouchableOpacity>
           </View>
+
+          <Text style={styles.text}>My Calendar</Text>
+          <View style={styles.calendarWrapper}>
+            <Calendar
+              hideExtraDays={true}
+              style={{ borderRadius: 15 }}
+              theme={{
+                calendarBackground: "#f3ebe8",
+                monthTextColor: 'rgba(74, 86, 96, 0.8)',
+                textMonthFontSize: 20,
+                textMonthFontWeight: "800",
+                textMonthFontFamily: "Nunito",
+              }}
+              markedDates={{
+                [today]: { selected: true, selectedColor: "#9b98f7" },
+              }}
+            />
+          </View>
         </ScrollView>
       </SafeAreaView>
     </RadialGradientBackground>
@@ -116,7 +136,6 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 15,
   },
   profileWrapper: {
@@ -126,6 +145,26 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     gap: 20,
     marginTop: 60,
+  },
+  calendarWrapper: {
+    borderRadius: 15,
+    margin: 15,
+    overflow: "hidden",
+    // iOS Shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    // Android Shadow
+    elevation: 6,
+  },
+  text: {
+    textAlign: "center",
+    fontSize: 24,
+    fontFamily: "Nunito",
+    fontWeight: "800",
+    color: "#000",
+    marginTop: 40,
   },
   title: {
     fontSize: 48,
