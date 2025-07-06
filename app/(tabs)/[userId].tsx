@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import { StyleSheet, ActivityIndicator, ScrollView } from "react-native";
-import { supabase } from "../../../lib/supabase";
+import { supabase } from "../../lib/supabase";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ProfileCard from "../../../components/ProfileCard";
+import ProfileCard from "../../components/ProfileCard";
 
 type UserProfile = {
   display_name: string;
@@ -27,7 +27,12 @@ export default function OtherProfile() {
   const [interest, setInterest] = useState<Record<string, Interest[]>>();
 
   useEffect(() => {
-    if (userId) fetchUserProfile();
+    if (userId) {
+      setProfile(null);
+      setInterest(undefined);
+      setLoading(true);
+      fetchUserProfile();
+    }
   }, [userId]);
 
   const fetchUserProfile = async () => {
