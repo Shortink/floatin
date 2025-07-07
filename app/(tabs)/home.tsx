@@ -33,7 +33,7 @@ export default function HomeScreen() {
   const today = new Date().toLocaleDateString("en-CA"); // format: YYYY-MM-DD
 
   useEffect(() => {
-    if (user.id) {
+    if (user?.id) {
       fetchUserProfiles();
     }
   }, [user]);
