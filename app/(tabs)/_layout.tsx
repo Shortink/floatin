@@ -178,6 +178,12 @@ export default function AppTabsLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="gallery/[userId]"
+        options={{
+          href: null,
+        }}
+      />
       </Tabs>
     </View>
   );
