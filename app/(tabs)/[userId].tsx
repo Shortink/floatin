@@ -98,7 +98,7 @@ export default function OtherProfile() {
           quadrant={profile.quadrant}
           birthday={profile.birthday}
           interests={interest}
-          onGalleryPress={() => router.push("(tabs)/profile/gallery")}
+          onGalleryPress={() => router.navigate(`(tabs)/gallery/${userId}`)}
           onSettingsPress={() => router.push("(tabs)/profile/settings")}
         />
       </ScrollView>
