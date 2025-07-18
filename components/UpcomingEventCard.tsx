@@ -3,14 +3,14 @@ type EventCardProps = {
   title: string;
   location: string;
   datetime: string;
-  imageUrl: string;
+  image_url: string;
 };
 
 export default function EventCard({
   title,
   location,
   datetime,
-  imageUrl,
+  image_url,
 }: EventCardProps) {
   const eventDate = new Date(datetime);
   const formattedDate = eventDate.toLocaleDateString("en-Can", {
@@ -27,7 +27,7 @@ export default function EventCard({
     <View style={styles.card}>
       <Text style={styles.headerText}>{title}</Text>
       <View style={{ flexDirection: "row", marginTop: 10, gap: "7%" }}>
-        <Image source={{ uri: imageUrl }} style={styles.circleImage} />
+        <Image source={{ uri: image_url }} style={styles.circleImage} />
         <View>
           <Text style={styles.headerText}>Location:</Text>
           <Text style={styles.text}>{location}</Text>
