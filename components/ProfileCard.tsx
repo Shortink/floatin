@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import GalleryIcon from "../assets/icons/gallery.svg";
 import SettingsIcon from "../assets/icons/settings.svg";
+import MatchIcon from "../assets/icons/match-icon.svg";
 type Interest = {
   id: number;
   name: string;
@@ -22,6 +23,7 @@ type Props = {
   birthday?: String;
   interests?: Record<string, Interest[]>;
   onGalleryPress?: () => void;
+  onMatchPress?: () => void;
   onSettingsPress?: () => void;
   ownProfile: boolean;
 };
@@ -34,6 +36,7 @@ export default function ProfileCard({
   birthday,
   interests = {},
   onGalleryPress,
+  onMatchPress,
   onSettingsPress,
   ownProfile,
 }: Props) {
@@ -55,11 +58,21 @@ export default function ProfileCard({
             </Pressable>
           </View>
           <View style={styles.centered}>
-            <Image
-              source={{ uri: avatarUrl }}
-              style={styles.avatar}
-              resizeMode="cover"
-            />
+            <View style={{ position: "relative" }}>
+              <Image
+                source={{ uri: avatarUrl }}
+                style={styles.avatar}
+                resizeMode="cover"
+              />
+              {onMatchPress ? (
+                <Pressable
+                  onPress={onMatchPress}
+                  style={{ position: "absolute", top: 0, right: 0 }}
+                >
+                  <MatchIcon width={30} height={30}  />
+                </Pressable>
+              ) : null}
+            </View>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ fontSize: 32, marginRight: 10 }}>
                 {displayName}
