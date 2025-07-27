@@ -78,6 +78,11 @@ export default function OtherProfile() {
     }
   };
 
+  const handleMatch = () => {
+    console.log("Match button pressed");
+  }
+  const matched = true; // Placeholder for match check logic
+
   if (loading) return <ActivityIndicator />;
   if (!profile) return <ActivityIndicator />;
 
@@ -100,6 +105,7 @@ export default function OtherProfile() {
           interests={interest}
           onGalleryPress={() => router.navigate(`(tabs)/gallery/${userId}`)}
           onSettingsPress={() => router.push("(tabs)/profile/settings")}
+          onMatchPress={handleMatch}
         />
       </ScrollView>
     </SafeAreaView>

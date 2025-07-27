@@ -8,8 +8,9 @@ import ProfileIcon from "../../assets/icons/profile.svg";
 
 export default function AppTabsLayout() {
   return (
-    <View style={{ flex: 1, backgroundColor: "#FFF6F3", }}>
+    <View style={{ flex: 1, backgroundColor: "#FFF6F3" }}>
       <Tabs
+        backBehavior="history"
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: "#66BFD2",
@@ -51,7 +52,7 @@ export default function AppTabsLayout() {
                   width={26}
                   height={26}
                   fill={focused ? "#66BFD2" : "#999"}
-                />
+                />189375
               </View>
             ),
           }}
@@ -173,17 +174,17 @@ export default function AppTabsLayout() {
           }}
         />
         <Tabs.Screen
-        name="[userId]"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="gallery/[userId]"
-        options={{
-          href: null,
-        }}
-      />
+          name="[userId]"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="gallery/[userId]"
+          options={{
+            href: null,
+          }}
+        />
       </Tabs>
     </View>
   );
