@@ -19,13 +19,22 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { supabase } from "../../../lib/supabase";
 import { SafeAreaView } from "react-native-safe-area-context";
 import dayjs from "dayjs";
-import { GiftedChat, IMessage } from "react-native-gifted-chat";
+import {
+  Actions,
+  Bubble,
+  Composer,
+  GiftedChat,
+  IMessage,
+  InputToolbar,
+  Send,
+} from "react-native-gifted-chat";
 import { useAuth } from "../../../context/auth";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
-
+import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { BlurView } from "expo-blur";
 
 export default function ChatScreen() {
   const router = useRouter();
@@ -102,7 +111,7 @@ export default function ChatScreen() {
 
   const handleOption = (screen: string) => {
     setVisible(false);
-    router.push(screen)
+    router.push(screen);
     // router.navigate(screen);
   };
 
@@ -128,46 +137,131 @@ export default function ChatScreen() {
           visible={visible}
           onRequestClose={() => setVisible(false)}
         >
-          <View style={styles.backdrop}>
-            {/* <TouchableOpacity style={styles.backdrop} onPress={() => setVisible(false)}> */}
-            <View style={styles.overlay}>
-              <Pressable
-                style={styles.option}
-                onPress={() => handleOption("(tabs)/events/planevent")}
-              >
-                <Text style={styles.optionText}>Plan Event</Text>
-                <Entypo name="plus" size={30} color="black" />
-              </Pressable>
-              <Pressable
-                style={styles.option}
-                onPress={() => handleOption("PlanEvent")}
-              >
-                <Text style={styles.optionText}>Icebreakers</Text>
-                <Entypo name="plus" size={30} color="black" />
-              </Pressable>
-              <Pressable
-                style={styles.option}
-                onPress={() => handleOption("PlanEvent")}
-              >
-                <Text style={styles.optionText}>Invite a friend</Text>
-                <Entypo name="plus" size={30} color="black" />
-              </Pressable>
-
-              <Pressable
-                style={styles.option}
-                onPress={() => setVisible(false)}
-              >
-                <Text style={{ color: "red" }}>Cancel</Text>
-              </Pressable>
-            </View>
-            {/* </TouchableOpacity> */}
-          </View>
+          <BlurView intensity={10} style={styles.backdrop} experimentalBlurMethod="dimezisBlurView">
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              activeOpacity={1}
+              onPress={() => setVisible(false)}
+            >
+              <View style={styles.overlay}>
+                <Pressable
+                  style={styles.option}
+                  onPress={() => handleOption("(tabs)/events/planevent")}
+                >
+                  <Text style={styles.optionText}>Plan Event</Text>
+                  <Entypo name="plus" size={30} color="black" />
+                </Pressable>
+                <Pressable
+                  style={styles.option}
+                  onPress={() => handleOption("PlanEvent")}
+                >
+                  <Text style={styles.optionText}>Icebreakers</Text>
+                  <Entypo name="plus" size={30} color="black" />
+                </Pressable>
+                <Pressable
+                  style={styles.option}
+                  onPress={() => handleOption("PlanEvent")}
+                >
+                  <Text style={styles.optionText}>Invite a friend</Text>
+                  <Entypo name="plus" size={30} color="black" />
+                </Pressable>
+              </View>
+            </TouchableOpacity>
+          </BlurView>
         </Modal>
         <View style={styles.chatBox}>
           <GiftedChat
             messages={messages}
             onSend={(messages) => onSend(messages)}
             user={{ _id: user.id }}
+            renderAvatar={null}
+            showAvatarForEveryMessage={true}
+            listViewProps={{ showsVerticalScrollIndicator: false }}
+            renderBubble={(props) => (
+              <Bubble
+                {...props}
+                wrapperStyle={{
+                  left: {
+                    backgroundColor: "#D6BDFA",
+                    borderRadius: 20,
+                    padding: 4,
+                    paddingVertical: 8,
+                  },
+                  right: {
+                    backgroundColor: "#D6BDFA",
+                    borderRadius: 20,
+                    padding: 4,
+                    paddingVertical: 8,
+                  },
+                }}
+                textStyle={{
+                  left: { color: "black" },
+                  right: { color: "black" },
+                }}
+                renderTime={() => null}
+              />
+            )}
+            renderInputToolbar={(props) => (
+              <InputToolbar
+                {...props}
+                containerStyle={{
+                  backgroundColor: "#FFF6F3",
+                  borderTopWidth: 1,
+                  borderWidth: 1,
+                  borderColor: "#D6BDFA",
+                  borderRadius: 30,
+                  marginBottom: 10,
+                  marginHorizontal: 10,
+                }}
+              />
+            )}
+            renderComposer={(props) => (
+              <Composer
+                {...props}
+                textInputStyle={{
+                  backgroundColor: "#FFF6F3",
+                  borderRadius: 20,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  marginLeft: 0,
+                  color: "black",
+                }}
+              />
+            )}
+            renderActions={(props) => (
+              <Actions
+                {...props}
+                containerStyle={{}}
+                icon={() => <Feather name="camera" size={24} color="grey" />}
+              />
+            )}
+            renderSend={(props) => {
+              if (props.text!.trim().length === 0) {
+                return (
+                  <Pressable style={{ padding: 10 }}>
+                    <Feather name="mic" size={24} color="grey" />
+                  </Pressable>
+                );
+              }
+
+              return (
+                <Send
+                  {...props}
+                  containerStyle={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginRight: 10,
+                  }}
+                >
+                  <Feather name="send" size={24} color="black" />
+                </Send>
+              );
+            }}
           />
         </View>
       </SafeAreaView>
@@ -206,19 +300,20 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    // backgroundColor: "rgba(0,0,0,0.4)",
+    // backgroundColor: "transparent",
     justifyContent: "center",
     alignItems: "center",
   },
   overlay: {
-    backgroundColor: "#9687A6",
+    backgroundColor: "rgba(214, 189, 250, 0.90)",
     padding: 20,
     borderRadius: 20,
-    width: "75%",
+    width: "70%",
   },
   option: {
     textAlign: "center",
-    borderWidth: 1,
+    borderWidth: 2,
     margin: 10,
     borderColor: "#A791C7",
     padding: 15,
