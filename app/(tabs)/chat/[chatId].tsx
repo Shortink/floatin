@@ -58,6 +58,38 @@ export default function ChatScreen() {
     fetchMessages();
   }, []);
 
+  useEffect(() => {
+    const channel = supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: `chat_id=eq.${chatId}`,
+        },
+        (payload) => {
+          const msg = payload.new;
+          const formatted = {
+            _id: msg.message_id,
+            text: msg.content,
+            createdAt: new Date(msg.sent_at),
+            user: {
+              _id: msg.sender_id,
+              name: "",
+              avatar: `https://api.dicebear.com/7.x/thumbs/png?seed=${msg.sender_id}`,
+            },
+          };
+          setMessages((prev) => GiftedChat.append(prev, [formatted]));
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [chatId]);
+
   const fetchMessages = async () => {
     const { data, error } = await supabase
       .from("messages")
@@ -90,29 +122,24 @@ export default function ChatScreen() {
     }
   };
 
-  const sendMessage = async (message: IMessage) => {
-    const { error } = await supabase.from("messages").insert({
-      chat_id: chatId,
-      sender_id: user.id,
-      content: message.text.trim(),
-    });
+  const onSend = useCallback(
+    async (message: IMessage[] = []) => {
+      if (message.length === 0) return;
 
-    if (error) console.error("Error sending message:", error);
-  };
-
-  const onSend = useCallback((message: IMessage[] = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, message)
-    );
-    console.log(messages);
-    console.log("Sending message:", message[0]);
-    sendMessage(message[0]);
-  }, []);
+      const msgToSend = message[0];
+      const { error } = await supabase.from("messages").insert({
+        chat_id: chatId,
+        sender_id: user.id,
+        content: msgToSend.text.trim(),
+      });
+      if (error) console.error("Error sending message:", error);
+    },
+    [chatId, user.id]
+  );
 
   const handleOption = (screen: string) => {
     setVisible(false);
     router.push(screen);
-    // router.navigate(screen);
   };
 
   return (
@@ -137,7 +164,11 @@ export default function ChatScreen() {
           visible={visible}
           onRequestClose={() => setVisible(false)}
         >
-          <BlurView intensity={10} style={styles.backdrop} experimentalBlurMethod="dimezisBlurView">
+          <BlurView
+            intensity={10}
+            style={styles.backdrop}
+            experimentalBlurMethod="dimezisBlurView"
+          >
             <TouchableOpacity
               style={{
                 flex: 1,
