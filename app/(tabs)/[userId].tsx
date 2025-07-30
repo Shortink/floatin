@@ -96,7 +96,7 @@ export default function OtherProfile() {
 
     const {data, error} = await supabase
     .from('friendship')
-    .insert({user_id: user_id, friend_id: friend_id})
+    .insert({user_id: user_id, friend_id: friend_id, requested_by: user.id})
     if (error) console.log(error);
   };
 
