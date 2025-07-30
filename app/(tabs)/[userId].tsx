@@ -4,6 +4,7 @@ import { StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ProfileCard from "../../components/ProfileCard";
+import { useAuth } from "../../context/auth";
 
 type UserProfile = {
   display_name: string;
@@ -12,6 +13,7 @@ type UserProfile = {
   pronouns?: string | null;
   quadrant: string;
   birthday: String;
+  id: String;
 };
 
 type Interest = {
@@ -25,6 +27,7 @@ export default function OtherProfile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [interest, setInterest] = useState<Record<string, Interest[]>>();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (userId) {
@@ -38,7 +41,7 @@ export default function OtherProfile() {
   const fetchUserProfile = async () => {
     const { data, error } = await supabase
       .from("public_profiles")
-      .select("display_name, bio, avatar_url, pronouns, quadrant, birthday")
+      .select("display_name, bio, avatar_url, pronouns, quadrant, birthday, id")
       .eq("id", userId)
       .single();
 
@@ -78,9 +81,28 @@ export default function OtherProfile() {
     }
   };
 
+  const sendFriendRequest = async () => {
+    //  enforces ordering of the pair of user IDs in friendship table.
+    //  without this you can accidentally insert 2 rows (user_id = A, friend_id = B) (user_id = B, friend_id = A) but they mean the same thing
+    //  check is also enforced on database
+    let user_id, friend_id;
+    if (user.id < profile!.id) {
+      user_id = user.id;
+      friend_id = profile!.id;
+    } else {
+      user_id = profile!.id;
+      friend_id = user.id;
+    }
+
+    const {data, error} = await supabase
+    .from('friendship')
+    .insert({user_id: user_id, friend_id: friend_id})
+    if (error) console.log(error);
+  };
+
   const handleMatch = () => {
     console.log("Match button pressed");
-  }
+  };
   const matched = true; // Placeholder for match check logic
 
   if (loading) return <ActivityIndicator />;
@@ -105,7 +127,7 @@ export default function OtherProfile() {
           interests={interest}
           onGalleryPress={() => router.navigate(`(tabs)/gallery/${userId}`)}
           onSettingsPress={() => router.push("(tabs)/profile/settings")}
-          onMatchPress={handleMatch}
+          onMatchPress={sendFriendRequest}
         />
       </ScrollView>
     </SafeAreaView>
