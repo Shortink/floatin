@@ -43,14 +43,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
+      //Validate user against server
+      if (session) {
+        const { data, error } = await supabase.auth.getUser();
+        if (error || !data?.user) {
+          console.log("User is gone", error);
+          await supabase.auth.signOut();
+          setUser(null);
+        } else {
+          setUser(data.user);
+        }
+      } else {
+        setUser(null);
+      }
     };
-
     getSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_, session) => {
-        setUser(session?.user ?? null);
+      async (_, session) => {
+        //Validate user against server
+        if (session) {
+          const { data, error } = await supabase.auth.getUser();
+          if (error || !data?.user) {
+            console.log("User is gone", error);
+            await supabase.auth.signOut();
+            setUser(null);
+          } else {
+            setUser(data.user);
+          }
+        } else {
+          setUser(null);
+        }
       }
     );
 
